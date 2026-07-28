@@ -49,7 +49,7 @@ jobs:
         run: go test ./... -race -cover -coverprofile=coverage.out
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
           version: latest
 
