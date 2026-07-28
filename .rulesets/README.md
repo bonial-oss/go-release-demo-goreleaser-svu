@@ -27,14 +27,29 @@ Applied ruleset IDs are recorded in the plan's execution ledger
 
 Enforces PR-based changes to `main`:
 
-- Requires a pull request (min 1 approval, dismiss stale on push, resolve
-  review threads before merge).
+- Requires a pull request (0 approvals for this PoC — solo-dev setup;
+  dismiss stale reviews on push; resolve review threads before merge).
 - Required status checks: `ci / test-and-lint`, `commitlint / commitlint`.
-- Requires signed commits.
 - Blocks force-push (`non_fast_forward`) and branch deletion.
-- No bypass actors — protection applies to everyone.
+- No bypass actors.
 
 `enforcement: "active"` — real enforcement.
+
+### PoC deviations from plan-intended shape
+
+- **`required_approving_review_count: 0`** (plan called for 1). In this
+  solo-dev PoC there's no second reviewer; requiring an approval would
+  deadlock all self-merges. In production, raise back to 1 (or higher)
+  and add reviewers to CODEOWNERS.
+- **`required_signatures` rule dropped** (plan included it). The PoC
+  author's git config doesn't have `commit.gpgsign=true` and no
+  automation is set up to sign commits from CI. In production, either
+  enable `commit.gpgsign=true` globally (`gpg.format=ssh` with an SSH
+  signing key) or gate on GitHub's "vigilant mode" — then re-add
+  `{ "type": "required_signatures" }` to the ruleset.
+
+Both deviations are documented as follow-ups; the ruleset shape in this
+file matches what's actually applied to the repo.
 
 ## `tags.json` — tag ruleset (evaluate-mode, provisional)
 
