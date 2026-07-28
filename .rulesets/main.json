@@ -22,8 +22,8 @@
       "parameters": {
         "strict_required_status_checks_policy": true,
         "required_status_checks": [
-          { "context": "ci / test-and-lint" },
-          { "context": "commitlint / commitlint" }
+          { "context": "test-and-lint" },
+          { "context": "commitlint" }
         ]
       }
     },
