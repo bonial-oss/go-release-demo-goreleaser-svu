@@ -144,13 +144,20 @@ jobs:
             assets/checksums.txt
 
       - name: Verify SLSA provenance
+        # The release workflow runs on `push: main`, so the SLSA
+        # provenance encodes `refs/heads/main` as the source ref, not the
+        # tag. Verify against the branch, not the tag. Tag binding is
+        # provided by the goreleaser-created release object itself,
+        # which is signed via cosign (previous step).
         shell: bash
+        env:
+          REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           for archive in assets/demo_*.tar.gz; do
             slsa-verifier verify-artifact \
               --provenance-path assets/multiple.intoto.jsonl \
-              --source-uri "github.com/${{ github.repository }}" \
-              --source-tag "${{ steps.tag.outputs.value }}" \
+              --source-uri "github.com/$REPO" \
+              --source-branch main \
               "$archive"
           done

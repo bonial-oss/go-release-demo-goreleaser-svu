@@ -77,9 +77,14 @@ Install `slsa-verifier`: <https://github.com/slsa-framework/slsa-verifier#instal
 slsa-verifier verify-artifact \
   --provenance-path multiple.intoto.jsonl \
   --source-uri github.com/bonial-oss/go-release-demo-goreleaser-svu \
-  --source-tag v0.1.0 \
+  --source-branch main \
   demo_0.1.0_linux_amd64.tar.gz
 ```
+
+Note: `--source-branch main` (not `--source-tag`). The release workflow
+runs on `push: main`, so SLSA provenance encodes `refs/heads/main` as
+the source ref, not the release tag. The tag-binding is provided by
+the release object's cosign signature over `checksums.txt` (Level 2).
 
 Expected output ends with:
 
