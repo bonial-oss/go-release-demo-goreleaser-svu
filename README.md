@@ -71,6 +71,29 @@ workflow produced.
 A manual `workflow_dispatch` path is supported for dry-run previews — see
 [`.github/workflows/release.yaml`](.github/workflows/release.yaml).
 
+## Verifying a published release (currently a manual step)
+
+The [`verify-release.yaml`](.github/workflows/verify-release.yaml) workflow
+runs rebuild-and-diff (reproducibility) and cosign + SLSA signature
+verification against every released asset. It is defined to trigger on
+`release: types: [released]` but **does not auto-trigger today** — the
+`promote` job publishes the release under `secrets.GITHUB_TOKEN`, and
+GitHub's [chain-prevention rule](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow)
+blocks the `released` event from firing other workflows in that case.
+
+After each release, dispatch verify-release manually:
+
+```bash
+gh workflow run verify-release.yaml \
+  --repo bonial-oss/go-release-demo-goreleaser-svu \
+  --ref main \
+  --field tag=v0.1.0   # substitute the actual release tag
+```
+
+**Planned fix:** switch `promote` to a dedicated `bonial-release` GitHub
+App token (see `.rulesets/README.md`). The App identity is distinct from
+`github-actions[bot]`, so `released` fires normally.
+
 ## Development
 
 ```bash
