@@ -96,6 +96,15 @@ with a token minted from the new app (via
 pushes tags under the app's identity — which the ruleset then correctly
 allows to bypass.
 
+Once the App is in place, **`verify-release.yaml` will also auto-trigger**
+on `release: types: [released]`. Today it doesn't, because `promote`
+publishes the release under `secrets.GITHUB_TOKEN` and GitHub's
+[workflow chain-prevention rule](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow)
+suppresses the `released` event in that case. The App's identity is
+distinct from `github-actions[bot]`, so the event fires normally. Until
+then, operators dispatch `verify-release.yaml` manually after each
+release (see the README's "Verifying a published release" section).
+
 Until that App exists, this ruleset stays in `evaluate` mode: violations
 are recorded in the ruleset's rule-suite log but not blocked. The
 `immutable-releases` repo setting (Task 16) is the load-bearing
