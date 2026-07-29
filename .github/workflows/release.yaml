@@ -187,15 +187,18 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write   # for the failure-issue-creation step below
     steps:
       - name: Publish the draft release (last write; immutable-releases-safe)
         shell: bash
         run: |
           set -euo pipefail
-          gh release edit "$TAG" --draft=false
-          gh release view "$TAG" --json name,tagName,isDraft,isPrerelease,url --jq '.'
+          gh release edit "$TAG" --draft=false --repo "$REPO"
+          gh release view "$TAG" --repo "$REPO" \
+            --json name,tagName,isDraft,isPrerelease,url --jq '.'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
           TAG: ${{ needs.goreleaser.outputs.tag_name }}
 
       - name: Job summary

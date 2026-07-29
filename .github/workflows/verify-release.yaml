@@ -119,10 +119,11 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
           TAG: ${{ steps.tag.outputs.value }}
         run: |
           set -euo pipefail
-          gh release download "$TAG" \
+          gh release download "$TAG" --repo "$REPO" \
             --pattern "checksums.txt" \
             --pattern "checksums.txt.sig" \
             --pattern "checksums.txt.pem" \
